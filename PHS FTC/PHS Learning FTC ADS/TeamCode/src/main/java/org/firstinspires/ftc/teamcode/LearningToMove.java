@@ -50,8 +50,8 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear OpMode")
-@Disabled
+@TeleOp(name="Basic Drive", group="Linear OpMode")
+//@Disabled
 public class LearningToMove extends LinearOpMode {
 
     // Declare OpMode members.
@@ -72,10 +72,10 @@ public class LearningToMove extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        fLeftDrive  = hardwareMap.get(DcMotor.class, "front_left_drive");
-        fRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
-        bLeftDrive  = hardwareMap.get(DcMotor.class, "back_left_drive");
-        bRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
+        fLeftDrive  = hardwareMap.get(DcMotor.class, "left_front");
+        fRightDrive = hardwareMap.get(DcMotor.class, "right_front");
+        bLeftDrive  = hardwareMap.get(DcMotor.class, "left_back");
+        bRightDrive = hardwareMap.get(DcMotor.class, "right_back");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -99,12 +99,15 @@ public class LearningToMove extends LinearOpMode {
             // Choose to drive using either Tank Mode, or POV Mode
             // Comment out the method that's not used.  The default below is POV.
 
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-           // double drive = -gamepad1.left_stick_y;
-           // double turn  =  gamepad1.right_stick_x;
-           // bLeftPower = Range.clip(drive + turn, -1.0, 1.0) ;
-           // bRightPower = Range.clip(drive - turn, -1.0, 1.0) ;
+
+            double drive = -gamepad1.left_stick_x;
+            double strafe = gamepad1.left_stick_y;
+            double twist = gamepad1.right_stick_x;
+            double scalingVal = Math.max(1,Math.abs(drive)+Math.abs(strafe)+Math.abs(twist));
+            fLeftDrive.setPower(drive + strafe + twist);
+            fRightDrive.setPower(drive - strafe + twist);
+            bLeftDrive.setPower(drive - strafe - twist);
+            bRightDrive.setPower(drive + strafe - twist);
 
             // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
@@ -114,7 +117,7 @@ public class LearningToMove extends LinearOpMode {
             // Send calculated power to wheels
            // leftDrive.setPower(bLeftPower);
            // rightDrive.setPower(bRightPower);
-
+/*
             //forward
             fRightPower = 1;
             fLeftPower = 1;
@@ -147,6 +150,8 @@ public class LearningToMove extends LinearOpMode {
            // telemetry.addData("Status", "Run Time: " + runtime.toString());
            // telemetry.addData("Motors", "left (%.2f), right (%.2f)", bLeftPower, bRightPower);
             //telemetry.update();
+            */
+
         }
     }
 }
